@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SqlDBM ROI Calculator</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <h1>SqlDBM ROI Calculator</h1>
+                <p>Discover the business impact of adopting SqlDBM for your data modeling needs</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">Step 1 of 4</span>
+            </div>
+        </header>
+
+        <main class="main">
+            <form id="roiForm" class="roi-form">
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" id="step1">
+                    <h2>Current Environment</h2>
+                    <p>Tell us about your current data modeling setup</p>
+
+                    <div class="form-group">
+                        <label for="dbSpend">Current annual Database/Data Warehouse spend *</label>
+                        <select id="dbSpend" name="dbSpend" required>
+                            <option value="">Select range</option>
+                            <option value="50000">Under $50K</option>
+                            <option value="100000">$50K - $100K</option>
+                            <option value="250000">$100K - $250K</option>
+                            <option value="500000">$250K - $500K</option>
+                            <option value="1000000">$500K - $1M</option>
+                            <option value="2000000">$1M - $2M</option>
+                            <option value="3000000">Over $2M</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dbtSpend">Current annual dbt spend (if applicable)</label>
+                        <select id="dbtSpend" name="dbtSpend">
+                            <option value="0">Not using dbt</option>
+                            <option value="25000">Under $25K</option>
+                            <option value="50000">$25K - $50K</option>
+                            <option value="100000">$50K - $100K</option>
+                            <option value="200000">$100K - $200K</option>
+                            <option value="300000">Over $200K</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teamSize">Size of data architecture/engineering team (FTEs) *</label>
+                        <input type="number" id="teamSize" name="teamSize" min="1" max="100" required>
+                        <small>Number of full-time equivalent employees</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stakeholders">Number of downstream stakeholders *</label>
+                        <input type="number" id="stakeholders" name="stakeholders" min="1" max="1000" required>
+                        <small>Business analysts, product managers, data consumers who rely on data models</small>
+                    </div>
+                </div>
+
+                <!-- Step 2: Project & Workflow Information -->
+                <div class="form-step" id="step2">
+                    <h2>Project & Workflow Information</h2>
+                    <p>Help us understand your data modeling processes</p>
+
+                    <div class="form-group">
+                        <label for="dataProducts">Estimated data products to build in next 12 months *</label>
+                        <input type="number" id="dataProducts" name="dataProducts" min="1" max="1000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modelTime">Average time from requirements to building a model *</label>
+                        <select id="modelTime" name="modelTime" required>
+                            <option value="">Select timeframe</option>
+                            <option value="3">1-3 days</option>
+                            <option value="7">1 week</option>
+                            <option value="14">2 weeks</option>
+                            <option value="30">1 month</option>
+                            <option value="60">2 months</option>
+                            <option value="90">3+ months</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentTools">Current tool(s) used for data modeling *</label>
+                        <select id="currentTools" name="currentTools" required>
+                            <option value="">Select primary tool</option>
+                            <option value="erwin">Erwin</option>
+                            <option value="powerdesigner">PowerDesigner</option>
+                            <option value="excel">Excel</option>
+                            <option value="visio">Visio</option>
+                            <option value="lucidchart">Lucidchart</option>
+                            <option value="draw.io">Draw.io</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reworkPercent">% of engineering time spent on rework or technical debt</label>
+                        <div class="slider-container">
+                            <input type="range" id="reworkPercent" name="reworkPercent" min="0" max="50" value="15" class="slider">
+                            <span class="slider-value" id="reworkValue">15%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="revisionPercent">% of models requiring revision due to unclear standards/requirements</label>
+                        <div class="slider-container">
+                            <input type="range" id="revisionPercent" name="revisionPercent" min="0" max="50" value="20" class="slider">
+                            <span class="slider-value" id="revisionValue">20%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Organization Information -->
+                <div class="form-step" id="step3">
+                    <h2>Organization Information</h2>
+                    <p>Tell us about your company to provide better benchmarks</p>
+
+                    <div class="form-group">
+                        <label for="industry">Industry *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select industry</option>
+                            <option value="financial-services">Financial Services</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="retail-ecommerce">Retail & E-commerce</option>
+                            <option value="technology">Technology</option>
+                            <option value="manufacturing">Manufacturing</option>
+                            <option value="telecommunications">Telecommunications</option>
+                            <option value="energy">Energy & Utilities</option>
+                            <option value="government">Government</option>
+                            <option value="education">Education</option>
+                            <option value="media">Media & Entertainment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="companySize">Company size/revenue bracket *</label>
+                        <select id="companySize" name="companySize" required>
+                            <option value="">Select company size</option>
+                            <option value="startup">Startup (< $10M revenue)</option>
+                            <option value="small">Small ($10M - $50M)</option>
+                            <option value="medium">Medium ($50M - $500M)</option>
+                            <option value="large">Large ($500M - $5B)</option>
+                            <option value="enterprise">Enterprise (> $5B)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <select id="region" name="region">
+                            <option value="americas">Americas</option>
+                            <option value="emea">EMEA</option>
+                            <option value="apac">APAC</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="usesCICD" name="usesCICD">
+                            <span class="checkmark"></span>
+                            Team uses Git/CI-CD integration today
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="usesGovernance" name="usesGovernance">
+                            <span class="checkmark"></span>
+                            Team uses governance tools (Collibra, Alation, Informatica)
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="cloudOnly" name="cloudOnly">
+                            <span class="checkmark"></span>
+                            Organization is cloud-only (not hybrid)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step 4: Contact Information -->
+                <div class="form-step" id="step4">
+                    <h2>Get Your ROI Results</h2>
+                    <p>Provide your business email to receive your personalized ROI calculation</p>
+
+                    <div class="form-group">
+                        <label for="businessEmail">Business Email *</label>
+                        <input type="email" id="businessEmail" name="businessEmail" required>
+                        <small>Please use your company email address (no personal emails like Gmail, Yahoo, etc.)</small>
+                        <div class="validation-message" id="emailValidation"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Company Name *</label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" name="jobTitle">
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">
+                    <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+                    <button type="button" id="nextBtn" class="btn btn-primary">Next</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="display: none;">Calculate ROI</button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2>Your SqlDBM ROI Results</h2>
+                    <button id="downloadPDF" class="btn btn-secondary">Download PDF Report</button>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-card highlight">
+                        <h3>ROI Summary</h3>
+                        <div class="metric-large" id="roiSummary">Loading...</div>
+                        <p id="roiDescription">Calculating your personalized ROI...</p>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Payback Period</h3>
+                        <div class="metric-large" id="paybackPeriod">Loading...</div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Annual Value Created</h3>
+                        <div class="metric-large" id="annualValue">Loading...</div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>3-Year ROI</h3>
+                        <div class="metric-large" id="threeYearROI">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Value Creation Breakdown</h3>
+                        <canvas id="valueBreakdownChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>ROI Timeline</h3>
+                        <canvas id="roiTimelineChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="detailed-breakdown">
+                    <h3>Detailed Analysis</h3>
+                    <div id="detailedResults"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 SqlDBM. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Calculating your ROI...</p>
+        </div>
+    </div>
+
+    <script src="scripts/validation.js"></script>
+    <script src="scripts/calculator.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/pdf-generator.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
