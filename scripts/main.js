@@ -285,6 +285,9 @@ class ROICalculatorApp {
         // Initialize charts
         this.charts.initializeCharts(this.results);
         
+        // Setup CTA
+        this.setupCTA();
+        
         // Animate numbers
         setTimeout(() => {
             this.charts.animateNumbers(this.results);
@@ -335,6 +338,55 @@ class ROICalculatorApp {
         `;
 
         detailedResults.innerHTML = html;
+    }
+
+    setupCTA() {
+        if (!this.results) return;
+
+        // Update CTA with dynamic savings amount
+        const ctaSavings = document.getElementById('ctaSavings');
+        if (ctaSavings) {
+            ctaSavings.textContent = `$${this.results.metrics.totalAnnualValue.toLocaleString()}`;
+        }
+
+        // Setup CTA button event handlers
+        const demoBtn = document.getElementById('demoBtn');
+        const tourBtn = document.getElementById('tourBtn');
+
+        if (demoBtn) {
+            demoBtn.addEventListener('click', () => this.handleDemoRequest());
+        }
+
+        if (tourBtn) {
+            tourBtn.addEventListener('click', () => this.handleTourRequest());
+        }
+    }
+
+    handleDemoRequest() {
+        // Track the demo request
+        console.log('Demo requested by:', this.formData);
+        
+        // You can customize this based on your preferred flow
+        const message = `Great choice! Based on your ${this.results.metrics.paybackMonths <= 12 ? 'impressive' : 'strong'} ROI projection, a live demo will show you exactly how to achieve these results.\n\nPlease contact our team at demo@sqldbm.com or call (555) 123-4567 to schedule your personalized demo.\n\nWe'll prepare a demo specifically tailored to ${this.formData.industry} companies like ${this.formData.company}.`;
+        
+        alert(message);
+        
+        // Alternative: Open email client
+        // const subject = encodeURIComponent(`Demo Request - ${this.formData.company}`);
+        // const body = encodeURIComponent(`Hi,\n\nI'd like to schedule a demo of SqlDBM. My ROI analysis shows potential savings of $${this.results.metrics.totalAnnualValue.toLocaleString()} annually.\n\nCompany: ${this.formData.company}\nContact: ${this.formData.firstName} ${this.formData.lastName}\nEmail: ${this.formData.businessEmail}\n\nBest regards`);
+        // window.open(`mailto:demo@sqldbm.com?subject=${subject}&body=${body}`);
+    }
+
+    handleTourRequest() {
+        // Track the tour request
+        console.log('Product tour requested by:', this.formData);
+        
+        const message = `Excellent! A custom product tour will highlight the specific SqlDBM features that drive your $${this.results.metrics.totalAnnualValue.toLocaleString()} annual value projection.\n\nOur team will create a personalized tour showing:\n• How SqlDBM accelerates your modeling workflows\n• Industry-specific features for ${this.formData.industry}\n• Integration with your current tools\n\nContact: tours@sqldbm.com or (555) 123-4567\n\nMention reference: ${this.formData.company}-${Date.now()}`;
+        
+        alert(message);
+        
+        // Alternative: Open email client or booking system
+        // window.open('https://calendly.com/sqldbm/product-tour');
     }
 
     async downloadPDF() {

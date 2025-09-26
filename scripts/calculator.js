@@ -25,8 +25,6 @@ class ROICalculator {
 
         // Company size multipliers
         this.companySizeMultipliers = {
-            'startup': 0.8,
-            'small': 0.9,
             'medium': 1.0,
             'large': 1.1,
             'enterprise': 1.2

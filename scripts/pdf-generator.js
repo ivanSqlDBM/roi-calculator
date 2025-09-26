@@ -15,13 +15,12 @@ class PDFGenerator {
 
             // Add content to PDF
             this.addHeader(doc);
-            this.addCompanyInfo(doc, formData);
-            this.addExecutiveSummary(doc, results);
-            this.addDetailedBreakdown(doc, results);
-            this.addMethodology(doc);
-            this.addFooter(doc);
-
-            // Generate filename
+        this.addCompanyInfo(doc, formData);
+        this.addExecutiveSummary(doc, results);
+        this.addDetailedBreakdown(doc, results);
+        this.addCallToAction(doc, results, formData);
+        this.addMethodology(doc);
+        this.addFooter(doc);            // Generate filename
             const timestamp = new Date().toISOString().split('T')[0];
             const companyName = formData.company.replace(/[^a-zA-Z0-9]/g, '_');
             const filename = `SqlDBM_ROI_Analysis_${companyName}_${timestamp}.pdf`;
@@ -225,6 +224,120 @@ class PDFGenerator {
         });
     }
 
+    addCallToAction(doc, results, formData) {
+        // Add new page for CTA
+        doc.addPage();
+        let yPos = 30;
+
+        // CTA Header with colored background
+        doc.setFillColor(102, 126, 234);
+        doc.rect(this.margin, yPos, this.contentWidth, 20, 'F');
+        
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('Ready to Transform Your Data Modeling Process?', this.margin + 10, yPos + 13);
+
+        yPos += 35;
+
+        // Value proposition
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const valueMessage = `Your analysis shows potential annual savings of $${results.metrics.totalAnnualValue.toLocaleString()} with SqlDBM. With a payback period of just ${Math.ceil(results.metrics.paybackMonths)} months and ${results.metrics.threeYearROI}x ROI over 3 years, isn't it time to see SqlDBM in action?`;
+        
+        const valueLines = doc.splitTextToSize(valueMessage, this.contentWidth);
+        doc.text(valueLines, this.margin, yPos);
+        yPos += valueLines.length * 6 + 15;
+
+        // Benefits section
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('What You\'ll Discover in Your Demo:', this.margin, yPos);
+        
+        yPos += 12;
+
+        const benefits = [
+            '⚡ See exactly how SqlDBM accelerates your modeling workflows',
+            '🎯 Discover features tailored to your ' + this.formatIndustry(formData.industry) + ' industry needs',
+            '💡 Get answers to your specific data modeling challenges',
+            '🚀 Learn how to achieve the projected savings in your environment',
+            '🔧 See integrations with your current tools and processes'
+        ];
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+
+        benefits.forEach(benefit => {
+            const benefitLines = doc.splitTextToSize(benefit, this.contentWidth - 10);
+            doc.text(benefitLines, this.margin + 5, yPos);
+            yPos += benefitLines.length * 5 + 3;
+        });
+
+        yPos += 15;
+
+        // CTA Boxes
+        const boxWidth = (this.contentWidth - 10) / 2;
+        const boxHeight = 35;
+
+        // Demo box
+        doc.setFillColor(102, 126, 234);
+        doc.setDrawColor(102, 126, 234);
+        doc.rect(this.margin, yPos, boxWidth, boxHeight, 'FD');
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('Schedule a Live Demo', this.margin + 10, yPos + 15);
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('30-minute personalized session', this.margin + 10, yPos + 25);
+
+        // Tour box
+        doc.setFillColor(248, 249, 250);
+        doc.setDrawColor(102, 126, 234);
+        doc.rect(this.margin + boxWidth + 10, yPos, boxWidth, boxHeight, 'FD');
+
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Request Product Tour', this.margin + boxWidth + 20, yPos + 15);
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Custom walkthrough for your use case', this.margin + boxWidth + 20, yPos + 25);
+
+        yPos += 50;
+
+        // Contact information
+        doc.setFillColor(248, 249, 250);
+        doc.rect(this.margin, yPos, this.contentWidth, 25, 'F');
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0, 0, 0);
+        doc.text('Contact Our Team Today:', this.margin + 10, yPos + 8);
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.text('📧 demo@sqldbm.com  |  📞 (555) 123-4567  |  🌐 www.sqldbm.com/demo', this.margin + 10, yPos + 18);
+
+        yPos += 35;
+
+        // Urgency message
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(100, 100, 100);
+        
+        const urgencyMessage = `Don't let another quarter pass without optimizing your data modeling process. Your competitors may already be gaining the advantages outlined in this analysis.`;
+        const urgencyLines = doc.splitTextToSize(urgencyMessage, this.contentWidth);
+        doc.text(urgencyLines, this.margin, yPos);
+    }
+
     addMethodology(doc) {
         let yPos = doc.internal.pageSize.height - 80;
 
@@ -346,9 +459,7 @@ class PDFGenerator {
 
     formatCompanySize(size) {
         const sizeMap = {
-            'startup': 'Startup (< $10M revenue)',
-            'small': 'Small ($10M - $50M)',
-            'medium': 'Medium ($50M - $500M)',
+            'medium': 'Medium (< $500M)',
             'large': 'Large ($500M - $5B)',
             'enterprise': 'Enterprise (> $5B)'
         };
