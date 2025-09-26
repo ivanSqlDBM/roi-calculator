@@ -363,6 +363,10 @@ body {
     max-height: 300px;
 }
 
+.chart-card canvas#valueBreakdownChart {
+    max-height: 350px; /* Extra height for horizontal bar chart */
+}
+
 /* Detailed Breakdown */
 .detailed-breakdown {
     background: #f8f9fa;

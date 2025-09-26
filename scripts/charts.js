@@ -46,9 +46,14 @@ class ROICharts {
         const ctx = document.getElementById('valueBreakdownChart');
         if (!ctx) return;
 
+        // Calculate percentages for data labels
+        const total = breakdown.reduce((sum, item) => sum + item.amount, 0);
+        const percentages = breakdown.map(item => Math.round((item.amount / total) * 100));
+
         const data = {
             labels: breakdown.map(item => item.category),
             datasets: [{
+                label: 'Annual Savings',
                 data: breakdown.map(item => item.amount),
                 backgroundColor: [
                     this.colors.primary,
@@ -56,64 +61,137 @@ class ROICharts {
                     this.colors.success,
                     this.colors.info
                 ],
-                borderWidth: 0,
-                hoverOffset: 10
+                borderColor: [
+                    this.colors.primary,
+                    this.colors.secondary,
+                    this.colors.success,
+                    this.colors.info
+                ],
+                borderWidth: 1,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         };
 
         const config = {
-            type: 'doughnut',
+            type: 'bar',
             data: data,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                indexAxis: 'y', // Horizontal bar chart
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            font: {
-                                size: 12
-                            },
-                            generateLabels: function(chart) {
-                                const data = chart.data;
-                                if (data.labels.length && data.datasets.length) {
-                                    return data.labels.map((label, i) => {
-                                        const value = data.datasets[0].data[i];
-                                        const total = data.datasets[0].data.reduce((sum, val) => sum + val, 0);
-                                        const percentage = Math.round((value / total) * 100);
-                                        
-                                        return {
-                                            text: `${label} (${percentage}%)`,
-                                            fillStyle: data.datasets[0].backgroundColor[i],
-                                            strokeStyle: data.datasets[0].backgroundColor[i],
-                                            lineWidth: 0,
-                                            index: i
-                                        };
-                                    });
-                                }
-                                return [];
-                            }
-                        }
+                        display: false // Hide legend since we only have one dataset
                     },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed;
-                                const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                
-                                return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+                                const value = context.parsed.x;
+                                const percentage = percentages[context.dataIndex];
+                                return `$${value.toLocaleString()} (${percentage}%)`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        color: '#333',
+                        font: {
+                            weight: 'bold',
+                            size: 11
+                        },
+                        formatter: function(value, context) {
+                            const percentage = percentages[context.dataIndex];
+                            return `${percentage}%`;
+                        },
+                        padding: {
+                            left: 10
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Annual Savings ($)',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value / 1000).toFixed(0) + 'K';
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            callback: function(value, index) {
+                                // Truncate long labels
+                                const label = this.getLabelForValue(value);
+                                return label.length > 25 ? label.substring(0, 22) + '...' : label;
                             }
                         }
                     }
                 },
+                elements: {
+                    bar: {
+                        borderWidth: 1
+                    }
+                },
                 animation: {
-                    animateScale: true,
-                    duration: 1000
+                    duration: 1500,
+                    easing: 'easeOutQuart'
+                },
+                layout: {
+                    padding: {
+                        right: 50 // Extra space for percentage labels
+                    }
                 }
-            }
+            },
+            plugins: [{
+                // Custom plugin to draw percentage labels
+                id: 'percentageLabels',
+                afterDatasetsDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    
+                    chart.data.datasets.forEach((dataset, i) => {
+                        const meta = chart.getDatasetMeta(i);
+                        meta.data.forEach((bar, index) => {
+                            const percentage = percentages[index];
+                            const value = dataset.data[index];
+                            
+                            // Position for the label
+                            const x = bar.x + 10;
+                            const y = bar.y + 4;
+                            
+                            // Style the text
+                            ctx.fillStyle = '#333';
+                            ctx.font = 'bold 12px Inter, sans-serif';
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'middle';
+                            
+                            // Draw percentage
+                            ctx.fillText(`${percentage}%`, x, y);
+                        });
+                    });
+                    
+                    ctx.restore();
+                }
+            }]
         };
 
         this.charts.valueBreakdown = new Chart(ctx, config);
