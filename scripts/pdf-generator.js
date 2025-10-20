@@ -19,7 +19,7 @@ class PDFGenerator {
         this.addExecutiveSummary(doc, results);
         this.addDetailedBreakdown(doc, results);
         this.addCallToAction(doc, results, formData);
-        this.addMethodology(doc);
+        this.addCalculationDetails(doc, results, formData);
         this.addFooter(doc);            // Generate filename
             const timestamp = new Date().toISOString().split('T')[0];
             const companyName = formData.company.replace(/[^a-zA-Z0-9]/g, '_');
@@ -323,37 +323,174 @@ class PDFGenerator {
         doc.text('https://content.sqldbm.com/contact-us', this.pageWidth/2, yPos, { align: 'center' });
     }
 
-    addMethodology(doc) {
-        let yPos = doc.internal.pageSize.height - 80;
+    addCalculationDetails(doc, results, formData) {
+        // Add new page for detailed calculations
+        doc.addPage();
+        let yPos = 30;
 
-        // Check if we need space
-        if (yPos < 50) {
+        // Page Header
+        doc.setFillColor(102, 126, 234);
+        doc.rect(this.margin, yPos, this.contentWidth, 15, 'F');
+        
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('How Did We Get to This Number?', this.margin + 5, yPos + 10);
+
+        yPos += 25;
+
+        // Introduction
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        const intro = 'Below are the detailed calculations that generated your ROI analysis, using your specific inputs and industry-standard benchmarks.';
+        doc.text(doc.splitTextToSize(intro, this.contentWidth), this.margin, yPos);
+        yPos += 15;
+
+        // Your Inputs Section
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Your Inputs:', this.margin, yPos);
+        yPos += 12;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+
+        const inputs = [
+            `Team Size: ${results.inputs.teamSize} engineers`,
+            `Stakeholders: ${results.inputs.stakeholders} downstream users`,
+            `Data Products/Year: ${results.inputs.dataProducts}`,
+            `Current Tool: ${this.formatCurrentTool(results.inputs.currentTools)}`,
+            `Industry: ${this.formatIndustry(results.inputs.industry)} (${results.inputs.industryMultiplier}x multiplier)`,
+            `Company Size: ${this.formatCompanySize(results.inputs.companySize)} (${results.inputs.companySizeMultiplier}x multiplier)`,
+            `Rework %: ${results.inputs.reworkPercent}%`,
+            `Revision %: ${results.inputs.revisionPercent}%`
+        ];
+
+        inputs.forEach(input => {
+            doc.text(`• ${input}`, this.margin + 5, yPos);
+            yPos += 6;
+        });
+
+        yPos += 10;
+
+        // Calculation 1: Labor Efficiency Savings
+        yPos = this.addCalculationSection(doc, yPos, '1. Labor Efficiency Savings', [
+            `Formula: Team Size × FTE Cost × Time Saved %`,
+            `Calculation: ${results.inputs.teamSize} × $150,000 × ${results.savings.laborEfficiency.timeSavedPercent}%`,
+            `= ${results.inputs.teamSize} × $150,000 × ${results.savings.laborEfficiency.timeSavedPercent/100}`,
+            `= $${results.savings.laborEfficiency.annualSavings.toLocaleString()}/year`
+        ], `Time savings adjusted for current tools and practices. ${results.inputs.currentTools === 'sqldbm' ? 'Minimal additional savings since already using SqlDBM.' : 'Significant savings from modernizing current tools.'}`);
+
+        // Calculation 2: Rework Reduction
+        yPos = this.addCalculationSection(doc, yPos, '2. Rework Reduction Savings', [
+            `Formula: Models/Year × Hours/Model × Hourly Rate × Rework Avoided %`,
+            `Calculation: ${results.inputs.dataProducts} × 80 × $75 × ${results.savings.reworkReduction.reworkAvoided}%`,
+            `= ${results.inputs.dataProducts} × 80 × $75 × ${results.savings.reworkReduction.reworkAvoided/100}`,
+            `= $${results.savings.reworkReduction.annualSavings.toLocaleString()}/year`
+        ], `Rework reduction based on improved model clarity and standardization through SqlDBM.`);
+
+        // Calculation 3: Downstream Productivity
+        yPos = this.addCalculationSection(doc, yPos, '3. Downstream Productivity Gains', [
+            `Formula: Stakeholders × Hours Saved/Month × Rate × 12 months`,
+            `Calculation: ${results.inputs.stakeholders} × ${results.savings.downstreamProductivity.hoursSavedPerMonth} × $60 × 12`,
+            `= ${results.inputs.stakeholders} × ${results.savings.downstreamProductivity.hoursSavedPerMonth} × $60 × 12`,
+            `= $${results.savings.downstreamProductivity.annualSavings.toLocaleString()}/year`
+        ], `Time savings for business analysts and data consumers through better model documentation and accessibility.`);
+
+        // Calculation 4: Tool Consolidation
+        yPos = this.addCalculationSection(doc, yPos, '4. Tool Consolidation Savings', [
+            `Current Tool Spend: $${results.savings.toolConsolidation.currentToolSpend.toLocaleString()}`,
+            `Consulting Costs: $${results.savings.toolConsolidation.consultingSpend.toLocaleString()}`,
+            `Total Current Spend: $${(results.savings.toolConsolidation.currentToolSpend + results.savings.toolConsolidation.consultingSpend).toLocaleString()}`,
+            `Reduction: ${results.savings.toolConsolidation.reductionPercent}%`,
+            `Savings: $${results.savings.toolConsolidation.annualSavings.toLocaleString()}/year`
+        ], `Savings from consolidating existing tools and reducing consulting needs.`);
+
+        // Final Calculation
+        if (yPos > 240) {
             doc.addPage();
             yPos = 30;
         }
 
-        doc.setFontSize(14);
+        doc.setFillColor(248, 249, 250);
+        doc.rect(this.margin, yPos, this.contentWidth, 35, 'F');
+
+        doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Total ROI Calculation:', this.margin + 10, yPos + 10);
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
         doc.setTextColor(0, 0, 0);
-        doc.text('Methodology', this.margin, yPos);
 
-        yPos += 15;
-
-        const methodology = [
-            '1. Labor Efficiency: Calculated based on team size × loaded FTE cost × time savings %',
-            '2. Rework Reduction: Models per year × hours per model × hourly cost × rework avoided %',
-            '3. Downstream Productivity: Stakeholders × hours saved per month × hourly cost × 12 months',
-            '4. Tool Consolidation: Current tool spend + consulting costs × reduction %'
+        const finalCalc = [
+            `Total Annual Value: $${results.metrics.totalAnnualValue.toLocaleString()}`,
+            `Less SqlDBM Cost: $120,000`,
+            `Net Annual Benefit: $${results.metrics.netAnnualValue.toLocaleString()}`,
+            `Payback Period: ${results.metrics.paybackMonths} months`,
+            `3-Year ROI: ${results.metrics.threeYearROI}x return`
         ];
 
+        finalCalc.forEach((item, index) => {
+            doc.text(item, this.margin + 10, yPos + 18 + (index * 4));
+        });
+    }
+
+    addCalculationSection(doc, startY, title, calculations, explanation) {
+        let yPos = startY;
+
+        // Check if we need a new page
+        if (yPos > 220) {
+            doc.addPage();
+            yPos = 30;
+        }
+
+        // Section title
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text(title, this.margin, yPos);
+        yPos += 10;
+
+        // Calculations
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
 
-        methodology.forEach(item => {
-            const splitText = doc.splitTextToSize(item, this.contentWidth - 5);
-            doc.text(splitText, this.margin + 5, yPos);
-            yPos += splitText.length * 5 + 3;
+        calculations.forEach(calc => {
+            doc.text(calc, this.margin + 5, yPos);
+            yPos += 5;
         });
+
+        yPos += 3;
+
+        // Explanation
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(100, 100, 100);
+        const explainLines = doc.splitTextToSize(explanation, this.contentWidth - 10);
+        doc.text(explainLines, this.margin + 5, yPos);
+        yPos += explainLines.length * 4 + 8;
+
+        return yPos;
+    }
+
+    formatCurrentTool(tool) {
+        const toolMap = {
+            'sqldbm': 'SqlDBM',
+            'erwin': 'Erwin',
+            'powerdesigner': 'PowerDesigner', 
+            'excel': 'Excel',
+            'visio': 'Visio',
+            'lucidchart': 'Lucidchart',
+            'draw.io': 'Draw.io',
+            'other': 'Other'
+        };
+        return toolMap[tool] || tool;
     }
 
     addTable(doc, headers, data, startY) {
