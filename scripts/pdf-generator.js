@@ -162,6 +162,25 @@ class PDFGenerator {
 
         yPos += 70;
 
+        // Add business value message
+        doc.setFillColor(248, 249, 250);
+        doc.setDrawColor(102, 126, 234);
+        doc.rect(this.margin, yPos, this.contentWidth, 25, 'FD');
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Key Business Insight:', this.margin + 10, yPos + 8);
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        const businessMessage = 'While data modeling may not directly generate revenue, SqlDBM transforms it into a business accelerator through efficiency gains, reduced rework, and enhanced downstream productivity.';
+        const businessLines = doc.splitTextToSize(businessMessage, this.contentWidth - 20);
+        doc.text(businessLines, this.margin + 10, yPos + 17);
+
+        yPos += 35;
+
         // Add narrative summary
         const summaryText = results.narrative || this.generateNarrativeSummary(results);
         doc.setFontSize(11);
@@ -233,10 +252,10 @@ class PDFGenerator {
         doc.setFillColor(102, 126, 234);
         doc.rect(this.margin, yPos, this.contentWidth, 20, 'F');
         
-        doc.setFontSize(18);
+        doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(255, 255, 255);
-        doc.text('Ready to Transform Your Data Modeling Process?', this.margin + 10, yPos + 13);
+        doc.text('Transform Data Modeling into a Business Accelerator', this.margin + 5, yPos + 13);
 
         yPos += 35;
 
@@ -245,7 +264,7 @@ class PDFGenerator {
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(0, 0, 0);
         
-        const valueMessage = `Your analysis shows potential annual savings of $${results.metrics.totalAnnualValue.toLocaleString()} with SqlDBM. With a payback period of just ${Math.ceil(results.metrics.paybackMonths)} months and ${results.metrics.threeYearROI}x ROI over 3 years, isn't it time to see SqlDBM in action?`;
+        const valueMessage = `Your analysis demonstrates how SqlDBM transforms data modeling from a cost center into a business accelerator, delivering $${results.metrics.totalAnnualValue.toLocaleString()} in annual value through efficiency gains, reduced rework, and enhanced downstream productivity. With a ${Math.ceil(results.metrics.paybackMonths)}-month payback period, SqlDBM proves that smart modeling infrastructure drives real business impact.`;
         
         const valueLines = doc.splitTextToSize(valueMessage, this.contentWidth);
         doc.text(valueLines, this.margin, yPos);
@@ -260,11 +279,11 @@ class PDFGenerator {
         yPos += 12;
 
         const benefits = [
-            '⚡ See exactly how SqlDBM accelerates your modeling workflows',
-            '🎯 Discover features tailored to your ' + this.formatIndustry(formData.industry) + ' industry needs',
-            '💡 Get answers to your specific data modeling challenges',
-            '🚀 Learn how to achieve the projected savings in your environment',
-            '🔧 See integrations with your current tools and processes'
+            '• See how SqlDBM accelerates workflows and reduces cycle times',
+            '• Discover how better models drive downstream productivity gains',
+            '• Learn cost reduction strategies through improved efficiency',
+            '• Understand how to achieve the projected savings in your environment',
+            '• See integrations that maximize your existing tool investments'
         ];
 
         doc.setFontSize(11);
@@ -273,69 +292,35 @@ class PDFGenerator {
 
         benefits.forEach(benefit => {
             const benefitLines = doc.splitTextToSize(benefit, this.contentWidth - 10);
-            doc.text(benefitLines, this.margin + 5, yPos);
+            doc.text(benefitLines, this.margin, yPos);
             yPos += benefitLines.length * 5 + 3;
         });
 
-        yPos += 15;
+        yPos += 25;
 
-        // CTA Boxes
-        const boxWidth = (this.contentWidth - 10) / 2;
-        const boxHeight = 35;
+        // Centered CTA Button
+        const ctaWidth = 80;
+        const ctaHeight = 20;
+        const ctaX = (this.pageWidth - ctaWidth) / 2;
 
-        // Demo box
+        // Draw CTA button
         doc.setFillColor(102, 126, 234);
         doc.setDrawColor(102, 126, 234);
-        doc.rect(this.margin, yPos, boxWidth, boxHeight, 'FD');
+        doc.rect(ctaX, yPos, ctaWidth, ctaHeight, 'FD');
 
-        doc.setFontSize(14);
+        // CTA text
+        doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(255, 255, 255);
-        doc.text('Schedule a Live Demo', this.margin + 10, yPos + 15);
-        
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text('30-minute personalized session', this.margin + 10, yPos + 25);
+        doc.text('Schedule a Live Demo', ctaX + ctaWidth/2, yPos + 13, { align: 'center' });
 
-        // Tour box
-        doc.setFillColor(248, 249, 250);
-        doc.setDrawColor(102, 126, 234);
-        doc.rect(this.margin + boxWidth + 10, yPos, boxWidth, boxHeight, 'FD');
+        yPos += 30;
 
-        doc.setFontSize(14);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(102, 126, 234);
-        doc.text('Request Product Tour', this.margin + boxWidth + 20, yPos + 15);
-        
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Custom walkthrough for your use case', this.margin + boxWidth + 20, yPos + 25);
-
-        yPos += 50;
-
-        // Contact information
-        doc.setFillColor(248, 249, 250);
-        doc.rect(this.margin, yPos, this.contentWidth, 25, 'F');
-
+        // Centered link
         doc.setFontSize(12);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(0, 0, 0);
-        doc.text('Contact Our Team Today:', this.margin + 10, yPos + 8);
-
-        doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
-        doc.text('📧 demo@sqldbm.com  |  📞 (555) 123-4567  |  🌐 www.sqldbm.com/demo', this.margin + 10, yPos + 18);
-
-        yPos += 35;
-
-        // Urgency message
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'italic');
-        doc.setTextColor(100, 100, 100);
-        
-        const urgencyMessage = `Don't let another quarter pass without optimizing your data modeling process. Your competitors may already be gaining the advantages outlined in this analysis.`;
-        const urgencyLines = doc.splitTextToSize(urgencyMessage, this.contentWidth);
-        doc.text(urgencyLines, this.margin, yPos);
+        doc.setTextColor(102, 126, 234);
+        doc.text('https://content.sqldbm.com/contact-us', this.pageWidth/2, yPos, { align: 'center' });
     }
 
     addMethodology(doc) {
@@ -472,7 +457,7 @@ class PDFGenerator {
             ? `${Math.round(results.metrics.paybackMonths)} months`
             : `${Math.round(results.metrics.paybackMonths / 12 * 10) / 10} years`;
 
-        return `Based on your organization's profile and current data modeling practices, implementing SqlDBM is projected to deliver significant value. The analysis shows a payback period of ${paybackText} with a ${results.metrics.threeYearROI}x return on investment over three years. The primary value drivers include improved team efficiency, reduced rework, enhanced stakeholder productivity, and tool consolidation savings. This analysis assumes conservative efficiency gains and is based on industry benchmarks for similar organizations.`;
+        return `While data modeling may not directly generate revenue, this analysis demonstrates how SqlDBM transforms it into a powerful business accelerator. Through improved efficiency, reduced rework, and enhanced downstream productivity, SqlDBM delivers a ${paybackText} payback period with ${results.metrics.threeYearROI}x ROI over three years. The projected $${results.metrics.totalAnnualValue.toLocaleString()} in annual value proves that smart modeling infrastructure drives measurable business impact beyond traditional cost center thinking.`;
     }
 }
 
