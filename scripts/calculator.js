@@ -11,6 +11,7 @@ class ROICalculator {
         // Industry benchmarks
         this.industryMultipliers = {
             'financial-services': 1.2,
+            'insurance': 1.15,
             'healthcare': 1.1,
             'technology': 1.0,
             'retail-ecommerce': 0.9,
@@ -110,7 +111,9 @@ class ROICalculator {
         let timeSavedPercent = 0.25; // Default 25% time saved
         
         // Adjust based on current tools and practices
-        if (inputs.currentTools === 'excel' || inputs.currentTools === 'visio') {
+        if (inputs.currentTools === 'sqldbm') {
+            timeSavedPercent = 0.10; // Minimal additional savings if already using SqlDBM
+        } else if (inputs.currentTools === 'excel' || inputs.currentTools === 'visio') {
             timeSavedPercent = 0.35; // More savings from basic tools
         } else if (inputs.currentTools === 'erwin' || inputs.currentTools === 'powerdesigner') {
             timeSavedPercent = 0.20; // Less savings from advanced tools
@@ -195,6 +198,9 @@ class ROICalculator {
         
         // Estimate current tool costs based on team size and current tools
         switch (inputs.currentTools) {
+            case 'sqldbm':
+                currentToolSpend = 120000; // Already using SqlDBM at $120K
+                break;
             case 'erwin':
                 currentToolSpend = inputs.teamSize * 8000; // ~$8K per user
                 break;
@@ -219,7 +225,9 @@ class ROICalculator {
         // Reduction percentage varies by current sophistication
         let reductionPercent = 0.60; // Default 60% reduction
         
-        if (inputs.currentTools === 'excel' || inputs.currentTools === 'visio') {
+        if (inputs.currentTools === 'sqldbm') {
+            reductionPercent = 0.05; // Minimal savings if already using SqlDBM
+        } else if (inputs.currentTools === 'excel' || inputs.currentTools === 'visio') {
             reductionPercent = 0.30; // Less existing spend to consolidate
         }
         

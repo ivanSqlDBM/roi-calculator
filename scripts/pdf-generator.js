@@ -443,6 +443,7 @@ class PDFGenerator {
     formatIndustry(industry) {
         const industryMap = {
             'financial-services': 'Financial Services',
+            'insurance': 'Insurance',
             'healthcare': 'Healthcare',
             'retail-ecommerce': 'Retail & E-commerce',
             'technology': 'Technology',
