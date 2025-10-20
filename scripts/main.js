@@ -234,6 +234,11 @@ class ROICalculatorApp {
             
             this.results = this.calculator.calculate(this.formData);
             
+            // Send webhook with lead data and results (don't let this block the user experience)
+            this.sendWebhookData().catch(error => {
+                console.warn('Webhook failed but continuing with user flow:', error);
+            });
+            
             // Hide loading and show results
             this.hideLoading();
             this.showResults();
@@ -433,6 +438,75 @@ class ROICalculatorApp {
     // Method to get current form data for external use
     getFormData() {
         return this.formData;
+    }
+
+    // Send webhook with lead data and ROI results
+    async sendWebhookData() {
+        try {
+            if (!this.results || !this.formData) {
+                console.warn('Missing results or form data for webhook');
+                return;
+            }
+
+            // Prepare the JSON payload
+            const webhookData = {
+                // Contact Information
+                firstName: this.formData.firstName || '',
+                lastName: this.formData.lastName || '', 
+                email: this.formData.businessEmail || '',
+                company: this.formData.company || '',
+                jobTitle: this.formData.jobTitle || '',
+                
+                // Company Details
+                industry: this.formData.industry || '',
+                companySize: this.formData.companySize || '',
+                region: this.formData.region || '',
+                
+                // Current Environment
+                teamSize: this.formData.teamSize || 0,
+                stakeholders: this.formData.stakeholders || 0,
+                dataProducts: this.formData.dataProducts || 0,
+                currentTools: this.formData.currentTools || '',
+                
+                // Executive Summary (Key ROI Metrics)
+                executiveSummary: {
+                    paybackPeriodMonths: Math.round(this.results.metrics.paybackMonths * 10) / 10,
+                    annualValueCreated: this.results.metrics.totalAnnualValue,
+                    threeYearROI: this.results.metrics.threeYearROI,
+                    netThreeYearValue: this.results.metrics.threeYearValue,
+                    netAnnualValue: this.results.metrics.netAnnualValue
+                },
+                
+                // Additional Context
+                submissionDate: new Date().toISOString(),
+                calculatorVersion: '1.0',
+                leadSource: 'SqlDBM ROI Calculator'
+            };
+
+            // Send to webhook endpoint
+            const response = await fetch('https://sqldbm1.app.n8n.cloud/webhook/form-submission', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(webhookData)
+            });
+
+            if (response.ok) {
+                console.log('Webhook sent successfully');
+                // Optionally store success flag for analytics
+                this.webhookSent = true;
+            } else {
+                console.warn('Webhook failed:', response.status, response.statusText);
+                this.webhookSent = false;
+            }
+
+        } catch (error) {
+            console.error('Webhook error:', error);
+            this.webhookSent = false;
+            // Don't show error to user - webhook failure shouldn't disrupt their experience
+        }
     }
 }
 
