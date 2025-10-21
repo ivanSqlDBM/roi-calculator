@@ -237,92 +237,205 @@
 
             <!-- Results Section -->
             <div id="resultsSection" class="results-section" style="display: none;">
-                <div class="results-header">
-                    <h2>Your SqlDBM ROI Results</h2>
-                    <button id="downloadPDF" class="btn btn-secondary">Download PDF Report</button>
-                </div>
+                <div class="results-container">
+                    <!-- Left side - Results -->
+                    <div class="results-content">
+                        <div class="results-header">
+                            <h2>Your SqlDBM ROI Results</h2>
+                            <button id="downloadPDF" class="btn btn-secondary">Download PDF Report</button>
+                        </div>
 
-                <div class="value-proposition">
-                    <div class="value-message">
-                        <p><strong>Important:</strong> While data modeling may not directly generate revenue, SqlDBM transforms it into a business accelerator. Your analysis shows how improved efficiency, reduced rework, and enhanced downstream productivity create substantial cost savings and organizational value.</p>
-                    </div>
-                </div>
-
-                <div class="results-grid">
-                    <div class="result-card highlight">
-                        <h3>ROI Summary</h3>
-                        <div class="metric-large" id="roiSummary">Loading...</div>
-                        <p id="roiDescription">Calculating your personalized ROI...</p>
-                    </div>
-
-                    <div class="result-card">
-                        <h3>Payback Period</h3>
-                        <div class="metric-large" id="paybackPeriod">Loading...</div>
-                    </div>
-
-                    <div class="result-card">
-                        <h3>Annual Value Created</h3>
-                        <div class="metric-large" id="annualValue">Loading...</div>
-                    </div>
-
-                    <div class="result-card">
-                        <h3>3-Year ROI</h3>
-                        <div class="metric-large" id="threeYearROI">Loading...</div>
-                    </div>
-                </div>
-
-                <div class="charts-container">
-                    <div class="chart-card">
-                        <h3>Annual Value Creation by Category</h3>
-                        <canvas id="valueBreakdownChart"></canvas>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>ROI Timeline</h3>
-                        <canvas id="roiTimelineChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="detailed-breakdown">
-                    <h3>Detailed Analysis</h3>
-                    <div id="detailedResults"></div>
-                </div>
-
-                <!-- Call-to-Action Section -->
-                <div class="cta-section">
-                    <div class="cta-content">
-                        <h3>Transform Data Modeling from Cost Center to Business Accelerator</h3>
-                        <p id="ctaMessage">Your analysis shows that SqlDBM can drive <strong id="ctaSavings">$XXX,XXX</strong> in annual value through efficiency gains and downstream productivity - proving that smart modeling infrastructure delivers real business impact.</p>
-                        
-                        <div class="cta-benefits">
-                            <div class="benefit-item">
-                                <span class="benefit-icon">⚡</span>
-                                <span>See how SqlDBM accelerates workflows and reduces cycle times</span>
-                            </div>
-                            <div class="benefit-item">
-                                <span class="benefit-icon">🎯</span>
-                                <span>Discover how better models drive downstream productivity gains</span>
-                            </div>
-                            <div class="benefit-item">
-                                <span class="benefit-icon">💡</span>
-                                <span>Learn cost reduction strategies through improved efficiency</span>
+                        <div class="value-proposition">
+                            <div class="value-message">
+                                <p><strong>Important:</strong> While data modeling may not directly generate revenue, SqlDBM transforms it into a business accelerator. Your analysis shows how improved efficiency, reduced rework, and enhanced downstream productivity create substantial cost savings and organizational value.</p>
                             </div>
                         </div>
 
-                        <div class="cta-buttons">
-                            <button id="demoBtn" class="btn btn-primary btn-large">
-                                <span class="btn-icon">🚀</span>
-                                Schedule a Live Demo
-                            </button>
-                            <button id="tourBtn" class="btn btn-secondary btn-large">
-                                <span class="btn-icon">🎬</span>
-                                Request Custom Product Tour
-                            </button>
+                        <div class="results-grid">
+                            <div class="result-card highlight">
+                                <h3>ROI Summary</h3>
+                                <div class="metric-large" id="roiSummary">Loading...</div>
+                                <p id="roiDescription">Calculating your personalized ROI...</p>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Payback Period</h3>
+                                <div class="metric-large" id="paybackPeriod">Loading...</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>Annual Value Created</h3>
+                                <div class="metric-large" id="annualValue">Loading...</div>
+                            </div>
+
+                            <div class="result-card">
+                                <h3>3-Year ROI</h3>
+                                <div class="metric-large" id="threeYearROI">Loading...</div>
+                            </div>
                         </div>
 
-                        <p class="cta-subtext">
-                            <strong>30-minute session</strong> • <strong>No commitment</strong> • <strong>Tailored to your use case</strong>
-                        </p>
+                        <div class="charts-container">
+                            <div class="chart-card">
+                                <h3>Annual Value Creation by Category</h3>
+                                <canvas id="valueBreakdownChart"></canvas>
+                            </div>
+
+                            <div class="chart-card">
+                                <h3>ROI Timeline</h3>
+                                <canvas id="roiTimelineChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="detailed-breakdown">
+                            <h3>Detailed Analysis</h3>
+                            <div id="detailedResults"></div>
+                        </div>
+
+                        <!-- Call-to-Action Section -->
+                        <div class="cta-section">
+                            <div class="cta-content">
+                                <h3>Transform Data Modeling from Cost Center to Business Accelerator</h3>
+                                <p id="ctaMessage">Your analysis shows that SqlDBM can drive <strong id="ctaSavings">$XXX,XXX</strong> in annual value through efficiency gains and downstream productivity - proving that smart modeling infrastructure delivers real business impact.</p>
+                                
+                                <div class="cta-benefits">
+                                    <div class="benefit-item">
+                                        <span class="benefit-icon">⚡</span>
+                                        <span>See how SqlDBM accelerates workflows and reduces cycle times</span>
+                                    </div>
+                                    <div class="benefit-item">
+                                        <span class="benefit-icon">🎯</span>
+                                        <span>Discover how better models drive downstream productivity gains</span>
+                                    </div>
+                                    <div class="benefit-item">
+                                        <span class="benefit-icon">💡</span>
+                                        <span>Learn cost reduction strategies through improved efficiency</span>
+                                    </div>
+                                </div>
+
+                                <div class="cta-buttons">
+                                    <button id="demoBtn" class="btn btn-primary btn-large">
+                                        <span class="btn-icon">🚀</span>
+                                        Schedule a Live Demo
+                                    </button>
+                                    <button id="tourBtn" class="btn btn-secondary btn-large">
+                                        <span class="btn-icon">🎬</span>
+                                        Request Custom Product Tour
+                                    </button>
+                                </div>
+
+                                <p class="cta-subtext">
+                                    <strong>30-minute session</strong> • <strong>No commitment</strong> • <strong>Tailored to your use case</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Input Adjustment Toggle -->
+                        <div class="input-adjustment-prompt">
+                            <div class="adjustment-content">
+                                <h4>Want to explore different scenarios?</h4>
+                                <p>Adjust your inputs below to see how changes impact your ROI potential</p>
+                                <button id="toggleModificationPanel" class="btn btn-adjustment">
+                                    <span class="btn-icon">⚙️</span>
+                                    <span id="toggleText">Adjust Inputs</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Modification Panel - Separate Section -->
+            <div class="modification-section" id="modificationSection" style="display: none;">
+                <div class="container">
+                    <div class="input-modification-panel">
+                        <div class="panel-header">
+                            <h3>Adjust Your Inputs</h3>
+                            <p>Change any values below and recalculate your ROI</p>
+                        </div>
+
+                        <div class="panel-content">
+                            <div class="input-group">
+                                <label for="modTeamSize">Team Size (Engineers)</label>
+                                <input type="number" id="modTeamSize" min="1" max="100">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modStakeholders">Downstream Stakeholders</label>
+                                <input type="number" id="modStakeholders" min="1" max="1000">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modDataProducts">Data Products (12 months)</label>
+                                <input type="number" id="modDataProducts" min="1" max="1000">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modCurrentTools">Current Modeling Tool</label>
+                                <select id="modCurrentTools">
+                                    <option value="sqldbm">SqlDBM</option>
+                                    <option value="erwin">Erwin</option>
+                                    <option value="powerdesigner">PowerDesigner</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="visio">Visio</option>
+                                    <option value="lucidchart">Lucidchart</option>
+                                    <option value="draw.io">Draw.io</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modIndustry">Industry</label>
+                                <select id="modIndustry">
+                                    <option value="financial-services">Financial Services</option>
+                                    <option value="insurance">Insurance</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="retail-ecommerce">Retail & E-commerce</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="manufacturing">Manufacturing</option>
+                                    <option value="telecommunications">Telecommunications</option>
+                                    <option value="energy">Energy & Utilities</option>
+                                    <option value="government">Government</option>
+                                    <option value="education">Education</option>
+                                    <option value="media">Media & Entertainment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modCompanySize">Company Size</label>
+                                <select id="modCompanySize">
+                                    <option value="medium">Medium (< $500M)</option>
+                                    <option value="large">Large ($500M - $5B)</option>
+                                    <option value="enterprise">Enterprise (> $5B)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modReworkPercent">Rework/Technical Debt %</label>
+                                <div class="slider-container">
+                                    <input type="range" id="modReworkPercent" min="0" max="50" class="slider">
+                                    <span class="slider-value" id="modReworkValue">15%</span>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="modRevisionPercent">Model Revision %</label>
+                                <div class="slider-container">
+                                    <input type="range" id="modRevisionPercent" min="0" max="50" class="slider">
+                                    <span class="slider-value" id="modRevisionValue">20%</span>
+                                </div>
+                            </div>
+
+                            <div class="panel-actions">
+                                <button id="recalculateBtn" class="btn btn-primary btn-full">
+                                    <span class="btn-icon">🔄</span>
+                                    Recalculate ROI
+                                </button>
+                                <button id="resetInputsBtn" class="btn btn-secondary btn-full">
+                                    Reset to Original
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -276,6 +276,220 @@ body {
     animation: fadeIn 0.5s ease-in;
 }
 
+.results-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.results-content {
+    width: 100%;
+}
+
+/* Modification Section */
+.modification-section {
+    background: #f8f9fa;
+    padding: 40px 0;
+    margin-top: 40px;
+    border-top: 1px solid #e9ecef;
+    animation: slideInUp 0.5s ease-out;
+}
+
+/* Input Modification Panel */
+.input-modification-panel {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.input-modification-panel .panel-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.panel-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.panel-header h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.panel-header p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+.panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.input-group input,
+.input-group select {
+    padding: 10px 12px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease;
+    background: white;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.panel-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-full {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+/* Panel slider styling */
+.input-modification-panel .slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-modification-panel .slider {
+    flex: 1;
+    height: 4px;
+}
+
+.input-modification-panel .slider-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #667eea;
+    min-width: 35px;
+}
+
+/* Modification Toggle */
+.modification-toggle {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.modification-toggle .btn {
+    background: transparent;
+    border: 2px solid #667eea;
+    color: #667eea;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.modification-toggle .btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Input Adjustment Prompt */
+.input-adjustment-prompt {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.adjustment-content h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.adjustment-content p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.btn-adjustment {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-adjustment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-adjustment:active {
+    transform: translateY(0);
+}
+
+/* Animation for slide in */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Results Header */
 .results-header {
     display: flex;
     justify-content: space-between;
@@ -730,5 +944,41 @@ body {
     
     .value-message p {
         font-size: 1rem;
+    }
+    
+    .results-container {
+        margin: 0 15px;
+    }
+    
+    .input-adjustment-prompt {
+        margin: 20px 15px 0;
+        padding: 20px;
+    }
+    
+    .adjustment-content h4 {
+        font-size: 1.1rem;
+    }
+    
+    .adjustment-content p {
+        font-size: 0.9rem;
+    }
+    
+    .input-modification-panel {
+        margin: 0 15px;
+        padding: 20px;
+    }
+    
+    .input-modification-panel .panel-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .modification-section {
+        padding: 30px 0;
+        margin-top: 30px;
+    }
+    
+    .panel-header h3 {
+        font-size: 1.2rem;
     }
 }

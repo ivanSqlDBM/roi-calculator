@@ -19,6 +19,8 @@ class ROICalculatorApp {
         this.calculator = new ROICalculator();
         this.charts = new ROICharts();
         this.pdfGenerator = new PDFGenerator();
+        this.originalFormData = {}; // Store original inputs
+        this.isRecalculation = false; // Track if this is a recalculation
 
         // Set up event listeners
         this.setupEventListeners();
@@ -55,6 +57,25 @@ class ROICalculatorApp {
 
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => this.downloadPDF());
+        }
+
+                // Setup modification panel sliders
+        this.setupModificationSliders();
+        const recalculateBtn = document.getElementById('recalculateBtn');
+        const resetInputsBtn = document.getElementById('resetInputsBtn');
+
+        if (recalculateBtn) {
+            recalculateBtn.addEventListener('click', () => this.recalculateROI());
+        }
+
+        if (resetInputsBtn) {
+            resetInputsBtn.addEventListener('click', () => this.resetToOriginalInputs());
+        }
+
+        // Toggle modification panel
+        const toggleModificationPanel = document.getElementById('toggleModificationPanel');
+        if (toggleModificationPanel) {
+            toggleModificationPanel.addEventListener('click', () => this.toggleModificationPanel());
         }
 
         // Form submission
@@ -293,6 +314,9 @@ class ROICalculatorApp {
         // Setup CTA
         this.setupCTA();
         
+        // Populate modification panel (but keep it hidden)
+        this.populateModificationPanel();
+        
         // Animate numbers
         setTimeout(() => {
             this.charts.animateNumbers(this.results);
@@ -438,6 +462,208 @@ class ROICalculatorApp {
     // Method to get current form data for external use
     getFormData() {
         return this.formData;
+    }
+
+    setupModificationSliders() {
+        // Modification panel rework slider
+        const modReworkSlider = document.getElementById('modReworkPercent');
+        const modReworkValue = document.getElementById('modReworkValue');
+        
+        if (modReworkSlider && modReworkValue) {
+            modReworkSlider.addEventListener('input', (e) => {
+                modReworkValue.textContent = e.target.value + '%';
+            });
+        }
+
+        // Modification panel revision slider
+        const modRevisionSlider = document.getElementById('modRevisionPercent');
+        const modRevisionValue = document.getElementById('modRevisionValue');
+        
+        if (modRevisionSlider && modRevisionValue) {
+            modRevisionSlider.addEventListener('input', (e) => {
+                modRevisionValue.textContent = e.target.value + '%';
+            });
+        }
+    }
+
+    populateModificationPanel() {
+        // Store original form data on first calculation
+        if (!this.isRecalculation) {
+            this.originalFormData = { ...this.formData };
+        }
+
+        // Populate modification panel with current values
+        const fields = [
+            { id: 'modTeamSize', value: this.formData.teamSize },
+            { id: 'modStakeholders', value: this.formData.stakeholders },
+            { id: 'modDataProducts', value: this.formData.dataProducts },
+            { id: 'modCurrentTools', value: this.formData.currentTools },
+            { id: 'modIndustry', value: this.formData.industry },
+            { id: 'modCompanySize', value: this.formData.companySize },
+            { id: 'modReworkPercent', value: this.formData.reworkPercent },
+            { id: 'modRevisionPercent', value: this.formData.revisionPercent }
+        ];
+
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.value = field.value;
+                
+                // Update slider displays
+                if (field.id === 'modReworkPercent') {
+                    document.getElementById('modReworkValue').textContent = field.value + '%';
+                }
+                if (field.id === 'modRevisionPercent') {
+                    document.getElementById('modRevisionValue').textContent = field.value + '%';
+                }
+            }
+        });
+
+        // Add modification panel event listeners
+        const recalculateBtn = document.getElementById('recalculateBtn');
+        if (recalculateBtn) {
+            recalculateBtn.addEventListener('click', () => {
+                this.recalculateROI();
+            });
+        }
+
+        const resetInputsBtn = document.getElementById('resetInputsBtn');
+        if (resetInputsBtn) {
+            resetInputsBtn.addEventListener('click', () => {
+                this.resetToOriginalInputs();
+            });
+        }
+
+        // Setup modification panel sliders
+        this.setupModificationSliders();
+    }
+
+    updateFormDataFromPanel() {
+        // Get values from modification panel
+        const modTeamSize = document.getElementById('modTeamSize');
+        const modStakeholders = document.getElementById('modStakeholders');
+        const modDataProducts = document.getElementById('modDataProducts');
+        const modCurrentTools = document.getElementById('modCurrentTools');
+        const modIndustry = document.getElementById('modIndustry');
+        const modCompanySize = document.getElementById('modCompanySize');
+        const modReworkPercent = document.getElementById('modReworkPercent');
+        const modRevisionPercent = document.getElementById('modRevisionPercent');
+
+        // Update form data with new values
+        if (modTeamSize) this.formData.teamSize = modTeamSize.value;
+        if (modStakeholders) this.formData.stakeholders = modStakeholders.value;
+        if (modDataProducts) this.formData.dataProducts = modDataProducts.value;
+        if (modCurrentTools) this.formData.currentTools = modCurrentTools.value;
+        if (modIndustry) this.formData.industry = modIndustry.value;
+        if (modCompanySize) this.formData.companySize = modCompanySize.value;
+        if (modReworkPercent) this.formData.reworkPercent = modReworkPercent.value;
+        if (modRevisionPercent) this.formData.revisionPercent = modRevisionPercent.value;
+    }
+
+    async recalculateROI() {
+        try {
+            // Mark as recalculation (no webhook)
+            this.isRecalculation = true;
+            
+            // Get updated values from modification panel
+            this.updateFormDataFromPanel();
+            
+            // Show loading
+            this.showLoading();
+            
+            // Recalculate with small delay for UX
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Calculate new results
+            this.results = this.calculator.calculate(this.formData);
+            
+            // Hide loading
+            this.hideLoading();
+            
+            // Update results display
+            this.updateResultsDisplay();
+            
+            // Scroll to top of results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            
+        } catch (error) {
+            console.error('Recalculation error:', error);
+            this.hideLoading();
+            this.showError('An error occurred while recalculating. Please try again.');
+        }
+    }
+
+    resetToOriginalInputs() {
+        if (!this.originalFormData || Object.keys(this.originalFormData).length === 0) {
+            this.showError('No original data to reset to.');
+            return;
+        }
+
+        // Restore original form data
+        this.formData = { ...this.originalFormData };
+        
+        // Repopulate the modification panel
+        this.populateModificationPanel();
+        
+        // Recalculate with original data
+        this.recalculateROI();
+    }
+
+    updateResultsDisplay() {
+        // Update all result displays
+        this.populateResults();
+        
+        // Reinitialize charts
+        this.charts.initializeCharts(this.results);
+        
+        // Re-setup CTA
+        this.setupCTA();
+        
+        // Animate numbers again
+        setTimeout(() => {
+            this.charts.animateNumbers(this.results);
+        }, 500);
+    }
+
+    showModificationSection() {
+        const modificationSection = document.getElementById('modificationSection');
+        if (modificationSection) {
+            modificationSection.style.display = 'block';
+        }
+    }
+
+    hideModificationSection() {
+        const modificationSection = document.getElementById('modificationSection');
+        if (modificationSection) {
+            modificationSection.style.display = 'none';
+        }
+    }
+
+    toggleModificationPanel() {
+        const modificationSection = document.getElementById('modificationSection');
+        const toggleText = document.getElementById('toggleText');
+        
+        if (modificationSection && toggleText) {
+            // Check if section is hidden (either display:none or default hidden state)
+            const isHidden = modificationSection.style.display === 'none' || 
+                           getComputedStyle(modificationSection).display === 'none';
+            
+            if (isHidden) {
+                this.showModificationSection();
+                toggleText.textContent = 'Hide Inputs';
+                
+                // Scroll to the modification section
+                setTimeout(() => {
+                    modificationSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            } else {
+                this.hideModificationSection();
+                toggleText.textContent = 'Adjust Inputs';
+            }
+        }
     }
 
     // Send webhook with lead data and ROI results
